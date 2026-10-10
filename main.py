@@ -1,5 +1,5 @@
-from db import LISTA_TAREFAS
-
+from db import LISTA_TAREFAS, LISTA_TAREFAS_CONCLUIDAS
+from os import system
 
 # Menu - Adicionar, Remover, Listar, Marcar como Concluída, Visualizar Concluídas
 def menu():
@@ -58,9 +58,31 @@ def listar_tarefas():
     if len(LISTA_TAREFAS) < 1:
         print("Nenhuma tarefa adicionada!")
         return
+    print("Tarefas:")
     for tarefa in LISTA_TAREFAS:
         print(f"{tarefa["id"]} - {tarefa["nome"]} - {tarefa["status"]}")
 
+    return
+    
+
+def marcar_como_concluida():
+    while True:
+        id = input("Digite o ID da tarefa:")
+        if id.isnumeric():
+            id = int(id)
+            break
+    LISTA_TAREFAS[id]["status"] = "Concluída"
+    LISTA_TAREFAS_CONCLUIDAS.append(LISTA_TAREFAS.pop(id-1))
+    print("Tarefa concluída")
+
+
+def listar_concluidas():
+    if len(LISTA_TAREFAS_CONCLUIDAS) < 1:
+        print("Nenhuma tarefa concluída!")
+        return
+    print("Tarefas concluídas:")
+    for tarefa in LISTA_TAREFAS_CONCLUIDAS:
+        print(f"{tarefa["id"]} - {tarefa["nome"]} - {tarefa["status"]}")
     return
 
 
@@ -74,16 +96,23 @@ while True:
 
     match opcao:
         case 1:
+            system("clear")
             listar_tarefas()
         case 2:
             #adicionar tareafas
+            system("clear")    
             adicionar_tarefa()
         case 3:
             #remover tarefas
+            system("clear")
+            listar_tarefas()
             remover_tarefa()
         case 4:
             #marcar como concluida
-            pass
+            system("clear")
+            listar_tarefas()
+            marcar_como_concluida()
         case 5:
             #listar tarefas concluidas
-            pass
+            system("clear")
+            listar_concluidas()
