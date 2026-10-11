@@ -12,7 +12,7 @@
 
 
 ## Como usar
- 1° - Clonar o repositório na sua máquina: [link-repositório](https://github.com/KauanNaves/lista-tarefas.git) 
+ 1° - Clonar o repositório na sua máquina: `gh repo clone KauanNaves/lista-tarefas`  
  
  2° - Executar o arquivo main: `python main.py` 
 
