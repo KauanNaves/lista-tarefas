@@ -1,5 +1,34 @@
 from db import LISTA_TAREFAS, LISTA_TAREFAS_CONCLUIDAS, ULTIMO_ID
 from os import system
+import json
+
+TAREFAS = {"LISTA_TAREFAS": [],
+           "LISTA_TAREFAS_CONCLUIDAS": [],
+           "ULTIMO_ID": 0}
+
+
+def criar_arquivo():
+    try:
+        with open("tarefas.json", mode="x", encoding="utf-8") as f:
+            json.dump(TAREFAS, f, indent=4, ensure_ascii=False)
+    except FileExistsError:
+        return
+
+
+def salvar_tarefas():
+    with open("tarefas.json", mode="w", encoding="utf-8") as file:
+        json.dump(TAREFAS, file, ensure_ascii=False, indent=4)
+    return
+
+
+def carregar_tarefas():
+    global TAREFAS
+    with open("tarefas.json", mode="r", encoding="utf-8") as file:
+        tarefas = json.load(file)
+
+    if tarefas:
+        TAREFAS = tarefas
+    return 
 
 
 # Menu - Adicionar, Remover, Listar, Marcar como Concluída, Visualizar Concluídas
@@ -33,12 +62,13 @@ def adicionar_tarefa():
     global ULTIMO_ID
     nome_tarefa = input("Digite o nome da tarefa: ")
     dict_tarefa = {
-        "id": ULTIMO_ID + 1,
+        "id": TAREFAS["ULTIMO_ID"] + 1,
         "nome": nome_tarefa,
         "status": "Pendente",
     }
-    LISTA_TAREFAS.append(dict_tarefa)
-    ULTIMO_ID += 1
+
+    TAREFAS["LISTA_TAREFAS"].append(dict_tarefa)
+    TAREFAS['ULTIMO_ID'] += 1
     print("Tarefa adicionada!")
     return
 
@@ -49,18 +79,18 @@ def remover_tarefa():
         if id.isnumeric():
             id = int(id)
             break
-    for tarefa in LISTA_TAREFAS:
+    for tarefa in TAREFAS["LISTA_TAREFAS"]:
         if tarefa["id"] == id:
-            LISTA_TAREFAS.remove(tarefa)
+            TAREFAS["LISTA_TAREFAS"].remove(tarefa)
     return
 
 
 def listar_tarefas():
-    if len(LISTA_TAREFAS) < 1:
+    if len(TAREFAS["LISTA_TAREFAS"]) < 1:
         print("Nenhuma tarefa adicionada!")
         return
     print("Tarefas:")
-    for tarefa in LISTA_TAREFAS:
+    for tarefa in TAREFAS["LISTA_TAREFAS"]:
         print(f"{tarefa["id"]} - {tarefa["nome"]} - {tarefa["status"]}")
 
     return
@@ -72,29 +102,32 @@ def marcar_como_concluida():
         if id.isnumeric():
             id = int(id)
             break
-    for tarefa in LISTA_TAREFAS:
+    for tarefa in TAREFAS["LISTA_TAREFAS"]:
         if tarefa["id"] == id:
             tarefa["status"] = "Concluída"
-            LISTA_TAREFAS.remove(tarefa)
-            LISTA_TAREFAS_CONCLUIDAS.append(tarefa)
+            TAREFAS["LISTA_TAREFAS"].remove(tarefa)
+            TAREFAS["LISTA_TAREFAS_CONCLUIDAS"].append(tarefa)
     print("Tarefa concluída")
 
 
 def listar_concluidas():
-    if len(LISTA_TAREFAS_CONCLUIDAS) < 1:
+    if len(TAREFAS["LISTA_TAREFAS_CONCLUIDAS"]) < 1:
         print("Nenhuma tarefa concluída!")
         return
     print("Tarefas concluídas:")
-    for tarefa in LISTA_TAREFAS_CONCLUIDAS:
+    for tarefa in TAREFAS["LISTA_TAREFAS_CONCLUIDAS"]:
         print(f"{tarefa["id"]} - {tarefa["nome"]} - {tarefa["status"]}")
     return
 
 
 while True:
+    criar_arquivo()
+    carregar_tarefas()
     menu()
     opcao = pegar_opcao()
 
     if opcao == 6:
+        salvar_tarefas()
         print("Saindo do programa...")
         break
 
@@ -106,24 +139,21 @@ while True:
             #adicionar tareafas
             system("clear")    
             adicionar_tarefa()
+            salvar_tarefas()
         case 3:
             #remover tarefas
             system("clear")
             listar_tarefas()
             remover_tarefa()
+            salvar_tarefas()
         case 4:
             #marcar como concluida
             system("clear")
             listar_tarefas()
             marcar_como_concluida()
+            salvar_tarefas()
         case 5:
             #listar tarefas concluidas
             system("clear")
             listar_concluidas()
 
-
-
-
-
-"""*BUG* - Quando removemos uma tarefa ou marcamos como concluída os ID's/índices da lista principal ficam bagunçados.
-Correção: Fazer uma função corrigir_lista() ou mudar o sistema para usar o id real da tarefa."""       
