@@ -1,4 +1,3 @@
-from db import LISTA_TAREFAS, LISTA_TAREFAS_CONCLUIDAS, ULTIMO_ID
 from os import system
 import json
 
@@ -23,12 +22,17 @@ def salvar_tarefas():
 
 def carregar_tarefas():
     global TAREFAS
-    with open("tarefas.json", mode="r", encoding="utf-8") as file:
-        tarefas = json.load(file)
+    try:
+        with open("tarefas.json", mode="r", encoding="utf-8") as file:
+            tarefas = json.load(file)
 
-    if tarefas:
-        TAREFAS = tarefas
-    return 
+        if tarefas:
+            TAREFAS = tarefas
+        return 
+    except json.decoder.JSONDecodeError:
+        print("Arquivo inválido (corrompido). Nenhuma tarefa encontrada, o programa irá reescrever o arquivo do zero.")
+        return
+
 
 
 # Menu - Adicionar, Remover, Listar, Marcar como Concluída, Visualizar Concluídas
@@ -82,6 +86,7 @@ def remover_tarefa():
     for tarefa in TAREFAS["LISTA_TAREFAS"]:
         if tarefa["id"] == id:
             TAREFAS["LISTA_TAREFAS"].remove(tarefa)
+            break
     else:
         for tarefa in TAREFAS["LISTA_TAREFAS_CONCLUIDAS"]:
             if tarefa["id"] == id:
@@ -112,7 +117,12 @@ def marcar_como_concluida():
             tarefa["status"] = "Concluída"
             TAREFAS["LISTA_TAREFAS"].remove(tarefa)
             TAREFAS["LISTA_TAREFAS_CONCLUIDAS"].append(tarefa)
+            break
+    else:
+        print("ID inválido, tarefa não encontrada!")
+        return
     print("Tarefa concluída")
+    return
 
 
 def listar_concluidas():
@@ -125,9 +135,9 @@ def listar_concluidas():
     return
 
 
+criar_arquivo()
+carregar_tarefas()
 while True:
-    criar_arquivo()
-    carregar_tarefas()
     menu()
     opcao = pegar_opcao()
 
