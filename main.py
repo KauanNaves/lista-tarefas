@@ -1,5 +1,6 @@
-from db import LISTA_TAREFAS, LISTA_TAREFAS_CONCLUIDAS
+from db import LISTA_TAREFAS, LISTA_TAREFAS_CONCLUIDAS, ULTIMO_ID
 from os import system
+
 
 # Menu - Adicionar, Remover, Listar, Marcar como Concluída, Visualizar Concluídas
 def menu():
@@ -13,7 +14,6 @@ def menu():
 """)
 
 
-# Pegar opção do usuário
 def pegar_opcao(min=1, max=6):
     while True:
         opcao_escolhida = input("Digite a opção desejada: ")
@@ -29,31 +29,32 @@ def pegar_opcao(min=1, max=6):
     return opcao_escolhida
 
 
-# Adicionar tarefas
 def adicionar_tarefa():
+    global ULTIMO_ID
     nome_tarefa = input("Digite o nome da tarefa: ")
     dict_tarefa = {
-        "id": len(LISTA_TAREFAS) + 1,
+        "id": ULTIMO_ID + 1,
         "nome": nome_tarefa,
         "status": "Pendente",
     }
     LISTA_TAREFAS.append(dict_tarefa)
+    ULTIMO_ID += 1
     print("Tarefa adicionada!")
     return
 
 
-# Remover tarefas
 def remover_tarefa():
     while True:
         id = input("Digite o ID da tarefa:")
         if id.isnumeric():
             id = int(id)
             break
-    LISTA_TAREFAS.pop(id-1)
+    for tarefa in LISTA_TAREFAS:
+        if tarefa["id"] == id:
+            LISTA_TAREFAS.remove(tarefa)
     return
 
 
-# Listar tarefas
 def listar_tarefas():
     if len(LISTA_TAREFAS) < 1:
         print("Nenhuma tarefa adicionada!")
@@ -71,8 +72,11 @@ def marcar_como_concluida():
         if id.isnumeric():
             id = int(id)
             break
-    LISTA_TAREFAS[id]["status"] = "Concluída"
-    LISTA_TAREFAS_CONCLUIDAS.append(LISTA_TAREFAS.pop(id-1))
+    for tarefa in LISTA_TAREFAS:
+        if tarefa["id"] == id:
+            tarefa["status"] = "Concluída"
+            LISTA_TAREFAS.remove(tarefa)
+            LISTA_TAREFAS_CONCLUIDAS.append(tarefa)
     print("Tarefa concluída")
 
 
@@ -116,3 +120,10 @@ while True:
             #listar tarefas concluidas
             system("clear")
             listar_concluidas()
+
+
+
+
+
+"""*BUG* - Quando removemos uma tarefa ou marcamos como concluída os ID's/índices da lista principal ficam bagunçados.
+Correção: Fazer uma função corrigir_lista() ou mudar o sistema para usar o id real da tarefa."""       
