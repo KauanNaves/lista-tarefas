@@ -38,7 +38,7 @@ def menu():
     [2] - Adicionar tarefa;
     [3] - Remover tarefa;
     [4] - Marcar como concluída;
-    [5] - Listas tarefas concluídas;
+    [5] - Listar tarefas concluídas;
     [6] - Sair
 """)
 
@@ -82,6 +82,11 @@ def remover_tarefa():
     for tarefa in TAREFAS["LISTA_TAREFAS"]:
         if tarefa["id"] == id:
             TAREFAS["LISTA_TAREFAS"].remove(tarefa)
+    else:
+        for tarefa in TAREFAS["LISTA_TAREFAS_CONCLUIDAS"]:
+            if tarefa["id"] == id:
+                TAREFAS["LISTA_TAREFAS_CONCLUIDAS"].remove(tarefa)
+
     return
 
 
@@ -144,6 +149,7 @@ while True:
             #remover tarefas
             system("clear")
             listar_tarefas()
+            listar_concluidas()
             remover_tarefa()
             salvar_tarefas()
         case 4:
