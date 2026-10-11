@@ -91,7 +91,10 @@ def remover_tarefa():
         for tarefa in TAREFAS["LISTA_TAREFAS_CONCLUIDAS"]:
             if tarefa["id"] == id:
                 TAREFAS["LISTA_TAREFAS_CONCLUIDAS"].remove(tarefa)
-
+                break
+        else:
+            print("ID inválido, tarefa não encontrada!")
+            return
     return
 
 
