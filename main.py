@@ -1,9 +1,6 @@
 from os import system
 import json
-
-TAREFAS = {"LISTA_TAREFAS": [],
-           "LISTA_TAREFAS_CONCLUIDAS": [],
-           "ULTIMO_ID": 0}
+from validacao_json import testar_json, TAREFAS
 
 def criar_arquivo():
     try:
@@ -138,6 +135,7 @@ def listar_concluidas():
 
 
 criar_arquivo()
+testar_json()
 carregar_tarefas()
 while True:
     menu()
