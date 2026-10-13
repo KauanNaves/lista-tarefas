@@ -5,7 +5,6 @@ TAREFAS = {"LISTA_TAREFAS": [],
            "LISTA_TAREFAS_CONCLUIDAS": [],
            "ULTIMO_ID": 0}
 
-
 def criar_arquivo():
     try:
         with open("tarefas.json", mode="x", encoding="utf-8") as f:
