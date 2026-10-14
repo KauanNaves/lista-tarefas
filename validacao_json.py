@@ -66,12 +66,10 @@ def validar_arquivo(dados: dict) -> dict:
             "alterou": True}
 
 
-# Validação das chaves e tipos de itens do dicionário
+# Validação das chaves
 def validar_chaves(dados: dict):
     dados_dicionario = deepcopy(dados)
     chaves_alteradas = []
-    itens_apagados = []
-
     chaves = set(dados_dicionario.keys())
     chaves_corretas = {"LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"}
     chaves_incorretas = []
@@ -116,28 +114,33 @@ def validar_chaves(dados: dict):
             chaves_alteradas.append("ULTIMO_ID")
 
 
-    # Validando item por item
+    return {"dados": dados_dicionario,
+            "chaves_alterados": set(chaves_alteradas)}
+
+
+# Validação dos itens de cada chave
+def validar_item():
+
+        # Validando item por item
     if "LISTA_TAREFAS" not in chaves_alteradas:
-            for item in dados_dicionario["LISTA_TAREFAS"]:
-                if set(item.keys()) != {"id", "nome", "status"}:
+        for item in dados_dicionario["LISTA_TAREFAS"]:
+            if set(item.keys()) != {"id", "nome", "status"}:
+                itens_apagados.append(item)
+                dados_dicionario["LISTA_TAREFAS"].remove(item)
+                continue
+            else:
+                if not isinstance(item["id"], int):
                     itens_apagados.append(item)
                     dados_dicionario["LISTA_TAREFAS"].remove(item)
-                    continue
-                else:
-                    if not isinstance(item["id"], int):
-                        itens_apagados.append(item)
-                        dados_dicionario["LISTA_TAREFAS"].remove(item)
-                        continue
-
-                    if not isinstance(item["nome"], str):
-                        itens_apagados.append(item)
-                        dados_dicionario["LISTA_TAREFAS"].remove(item)
-                        continue
-
-                    if not isinstance(item["status"], str):
-                        itens_apagados.append(item)
-                        dados_dicionario["LISTA_TAREFAS"].remove(item)
-                        continue       
+                    continu 
+                if not isinstance(item["nome"], str):
+                    itens_apagados.append(item)
+                    dados_dicionario["LISTA_TAREFAS"].remove(item)
+                    continu 
+                if not isinstance(item["status"], str):
+                    itens_apagados.append(item)
+                    dados_dicionario["LISTA_TAREFAS"].remove(item)
+                    continue       
 
 
     if "LISTA_TAREFAS_CONCLUIDAS" not in chaves_alteradas:
@@ -162,11 +165,6 @@ def validar_chaves(dados: dict):
                         dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
                         continue           
             
-
-    return {"dados": dados_dicionario,
-            "chaves_alterados": set(chaves_alteradas),
-            "itens_apagados": itens_apagados}
-
 
 
 if __name__ == "__main__":
