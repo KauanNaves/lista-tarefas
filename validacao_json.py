@@ -41,13 +41,13 @@ def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
     return True
 
 
-# Validação de casos onde o json não é um dicionário
+# Validação de casos onde o json não é um dicionário ou é um dicionário vazio
 def validar_arquivo(dados: dict) -> dict:
     """
         Retorna um dicionário com os dados, e indicando se os dados tiverem que ser alterado ou não
         Se "alterou" == True, não precisa prosseguir com outras validações, pois foi totalmente reescrito
     """
-    dados_arquivo = deepcopy(dados["dados"])
+    dados_arquivo = deepcopy(dados)
 
     if isinstance(dados_arquivo, dict):
 
@@ -65,26 +65,120 @@ def validar_arquivo(dados: dict) -> dict:
     return {"dados": dados_arquivo,
             "alterou": True}
 
-    
+
+# Validação das chaves e tipos de itens do dicionário
+def validar_chaves(dados: dict):
+    dados_dicionario = deepcopy(dados)
+    chaves_alteradas = []
+    itens_apagados = []
+
+    chaves = set(dados_dicionario.keys())
+    chaves_corretas = {"LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"}
+    chaves_incorretas = []
+
+    if chaves == chaves_corretas:
+        if not isinstance(dados_dicionario["LISTA_TAREFAS"], list):
+            dados_dicionario["LISTA_TAREFAS"] = []
+            chaves_alteradas.append("LISTA_TAREFAS")
+
+        if not isinstance(dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"], list):
+            dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"] = []
+            chaves_alteradas.append("LISTA_TAREFAS_CONCLUIDAS")
+
+        if not isinstance(dados_dicionario["ULTIMO_ID"], int):
+            dados_dicionario["ULTIMO_ID"] = 0
+            chaves_alteradas.append("ULTIMO_ID")
 
 
+    if chaves != chaves_corretas:
+        for chave in chaves:
+            if chave not in chaves_corretas:
+                chaves_incorretas.append(chave)
+                dados_dicionario.pop(chave)
 
 
+    for chave in chaves_incorretas:
+        chaves.remove(chave)
 
+
+    if len(chaves) < 3:
+        if "LISTA_TAREFAS" not in chaves:
+            dados_dicionario["LISTA_TAREFAS"] = []
+            chaves_alteradas.append("LISTA_TAREFAS")
+
+        if "LISTA_TAREFAS_CONCLUIDAS" not in chaves:
+            dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"] = []
+            chaves_alteradas.append("LISTA_TAREFAS_CONCLUIDAS")
+
+
+        if "ULTIMO_ID" not in chaves:
+            dados_dicionario["ULTIMO_ID"] = 0
+            chaves_alteradas.append("ULTIMO_ID")
+
+
+    # Validando item por item
+    if "LISTA_TAREFAS" not in chaves_alteradas:
+            for item in dados_dicionario["LISTA_TAREFAS"]:
+                if set(item.keys()) != {"id", "nome", "status"}:
+                    itens_apagados.append(item)
+                    dados_dicionario["LISTA_TAREFAS"].remove(item)
+                    continue
+                else:
+                    if not isinstance(item["id"], int):
+                        itens_apagados.append(item)
+                        dados_dicionario["LISTA_TAREFAS"].remove(item)
+                        continue
+
+                    if not isinstance(item["nome"], str):
+                        itens_apagados.append(item)
+                        dados_dicionario["LISTA_TAREFAS"].remove(item)
+                        continue
+
+                    if not isinstance(item["status"], str):
+                        itens_apagados.append(item)
+                        dados_dicionario["LISTA_TAREFAS"].remove(item)
+                        continue       
+
+
+    if "LISTA_TAREFAS_CONCLUIDAS" not in chaves_alteradas:
+            for item in dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"]:
+                if set(item.keys()) != {"id", "nome", "status"}:
+                    itens_apagados.append(item)
+                    dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
+                    continue
+                else:
+                    if not isinstance(item["id"], int):
+                        itens_apagados.append(item)
+                        dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
+                        continue
+
+                    if not isinstance(item["nome"], str):
+                        itens_apagados.append(item)
+                        dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
+                        continue
+
+                    if not isinstance(item["status"], str):
+                        itens_apagados.append(item)
+                        dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
+                        continue           
+            
+
+    return {"dados": dados_dicionario,
+            "chaves_alterados": set(chaves_alteradas),
+            "itens_apagados": itens_apagados}
 
 
 
 if __name__ == "__main__":
 
-    dados_ = {"dados": {"a": 1},
-              "alterou": False}
+    dicionario = {"LISTA_TAREFAS_CONCLUIDAS": 1,
+                  "ULTIMO_ID ": 2,
+                  "LISTA_TAREFAS": []}
 
-    retorno = validar_arquivo(dados_)
+    chaves = set(dicionario.keys())
+    chaves2 = set(DICIONARIO_PADRAO.keys())
 
-    if retorno["alterou"]:
-        print("Arquivo reescrito")
-
-    print(retorno["dados"])
+    print(chaves == chaves2)
 
 
 
