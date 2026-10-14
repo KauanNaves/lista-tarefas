@@ -33,10 +33,12 @@ def buscar_dados(arquivo: str = NOME_ARQUIVO) -> dict:
 
 def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
     """
-        Retorna True ou False caso consiga, ou não, salvar os dados
+        Retorna True caso consiga salvar os dados
     """
-    return True
+    with open(arquivo, mode="w", encoding="utf-8") as file:
+        json.dump(dados, file, ensure_ascii=False, indent=4)
 
+    return True
 
 
 # Validação de casos onde o json não é um dicionário
@@ -50,10 +52,4 @@ def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
 
 
 if __name__ == "__main__":
-    dados_arquivo = buscar_dados("teste.json")
-
-    dados = dados_arquivo["dados"]
-    reescrito = dados_arquivo["reescrito"]
-
-
-    print(f"Arquivo reescrito\nDados: {dados}"  if reescrito else f"Arquivo lido: {dados}" )
+   
