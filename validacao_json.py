@@ -28,7 +28,7 @@ def buscar_dados(arquivo: str = NOME_ARQUIVO) -> dict:
             json.dump(DICIONARIO_PADRAO, file, ensure_ascii=False, indent=4)
 
         print(f"O arquivo {arquivo} estava vazio, foi reescrito da forma correta.")
-        return {"dados": DICIONARIO_PADRAO, "reescrito": True}
+        return {"dados": deepcopy(DICIONARIO_PADRAO), "reescrito": True}
 
 
 def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
@@ -211,7 +211,7 @@ def testar_json(arquivo_json: str) -> None:
         return
     
     print("Validando dicionário do arquivo...")
-    dados_arquivo = validar_arquivo(dados)
+    dados_arquivo = validar_arquivo(dados["reescrito"])
 
     if dados_arquivo["alterou"]:
         print("Os dados do arquivo lido estavam corrompidos, foi necessário reescrevê-lo")
@@ -222,18 +222,13 @@ def testar_json(arquivo_json: str) -> None:
 
     
     print("Validando chaves do dicionário...")
-    dados_chave = validar_chaves(dados_arquivo)
+    dados_chave = validar_chaves(dados_arquivo["dados"])
 
     chaves_validar = ["LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"]
 
-    if chaves_validar[0] in dados_chave["chaves_alteradas"]:
-        chaves_validar.pop(0)
-
-    if chaves_validar[1] in dados_chave["chaves_alteradas"]:
-        chaves_validar.pop(1)
-    
-    if chaves_validar[2] in dados_chave["chaves_alteradas"]:
-        chaves_validar.pop(2)
+    for chave in chaves_validar:
+        if chave in dados_chave["chaves_alteradas"]:
+            chaves_validar.remove(chave)
     
     print("Validando itens...")
 
@@ -248,7 +243,7 @@ def testar_json(arquivo_json: str) -> None:
                     print(item)
         else:
             print("Tarefas pendentes válidas")
-        dados_chave["LISTA_TAREFAS"] = dados_tarefas
+        dados_chave["dados"]["LISTA_TAREFAS"] = dados_tarefas["dados"]
 
     if "LISTA_TAREFAS_CONCLUIDAS" in chaves_validar:
         dados_tarefas = validar_itens(dados_chave["dados"], "LISTA_TAREFAS_CONCLUIDAS")
@@ -261,16 +256,16 @@ def testar_json(arquivo_json: str) -> None:
                     print(item)
         else:
             print("Tarefas concluidas válidas")
-        dados_chave["LISTA_TAREFAS_CONCLUIDAS"] = dados_tarefas
+        dados_chave["dados"]["LISTA_TAREFAS_CONCLUIDAS"] = dados_tarefas["dados"]
     
 
-    dados_id = validar_id(dados_tarefas)
+    dados_id = validar_id(dados_chave["dados"])
 
     if dados_id["alterado"]:
         print("ULTIMO_ID cadastrado estava inválido, teve de ser corrigido.")
     print("Validação finalizada!")
     print("Salvando dados...")
-    salvar_dados(dados=dados_id, arquivo=arquivo_json)
+    salvar_dados(dados=dados_id["dados"], arquivo=arquivo_json)
     print("Dados salvos...")
     return
 
