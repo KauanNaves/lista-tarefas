@@ -1,6 +1,9 @@
 from os import system
 import json
-from validacao_json import testar_json, TAREFAS
+from validacao_json import testar_json, DICIONARIO_PADRAO
+
+TAREFAS = DICIONARIO_PADRAO
+NOME_ARQUIVO = 'tarefas.json'
 
 def criar_arquivo():
     try:
@@ -135,7 +138,7 @@ def listar_concluidas():
 
 
 criar_arquivo()
-testar_json()
+testar_json(NOME_ARQUIVO)
 carregar_tarefas()
 while True:
     menu()

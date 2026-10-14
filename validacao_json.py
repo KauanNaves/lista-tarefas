@@ -45,7 +45,9 @@ def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
 def validar_arquivo(dados: dict) -> dict:
     """
         Retorna um dicionário com os dados, e indicando se os dados tiverem que ser alterado ou não
-        Se "alterou" == True, não precisa prosseguir com outras validações, pois foi totalmente reescrito
+        Se "alterou" == True, não precisa prosseguir com outras validações, pois foi totalmente reescrito´
+        dict = {"dados": dados_arquivo,
+        "alterou": bool}
     """
     dados_arquivo = deepcopy(dados)
 
@@ -70,6 +72,9 @@ def validar_arquivo(dados: dict) -> dict:
 def validar_chaves(dados: dict) -> dict:
     """
         Recebe o dicionário e verifica se todas as chaves estão corretas, adiciona e remove as que forem necessárias, retorna um dicionário dados validados e as chaves alteradas, todas as chaves alteradas foram reescritas, então não precisa validar os seus itens
+        dict =  {"dados": dados_dicionario,
+            "chaves_alterados": set(chaves_alteradas)}
+
     """
 
     dados_dicionario = deepcopy(dados)
@@ -103,7 +108,7 @@ def validar_chaves(dados: dict) -> dict:
 
 
     return {"dados": dados_dicionario,
-            "chaves_alterados": set(chaves_alteradas)}
+            "chaves_alteradas": set(chaves_alteradas)}
 
 
 # Validação dos itens de cada chave
@@ -112,6 +117,10 @@ def validar_itens(dicionario: dict, chave: str) -> dict:
         Recebe somente a chave necessária para validar os dados, por exemplo, recebe somente "LISTA_TAREFAS" e valida
         -- Não valida "ULTIMO_ID" --
         Retorna o dicionário com os dados corretos, e alterado=bool indicando se foi alterado ou não, uma lista com os itens removidos e um indicador se foi reescrito ou não
+        dict = {"dados": dados,
+                "alterado": alterado,
+                "reescrito": True,
+                "itens_removidos": itens_removidos}
     """
     dados = deepcopy(dicionario[chave])
     itens_removidos = list()
@@ -153,6 +162,8 @@ def validar_id(dicionario_completo: dict) -> dict:
     """
         Recebe o dicionário completo e valida o ultimo_id, verifica se é um inteiro e se é maior que o maior id cadastrado
         Retorna um dicionário com os dados e indicando se foi alterado
+        dict = {"dados": dados,
+                "alterado": True}
     """
 
     dados = deepcopy(dicionario_completo)
@@ -185,6 +196,82 @@ def validar_id(dicionario_completo: dict) -> dict:
             "alterado": False}
 
 
+def testar_json(arquivo_json: str) -> None:
+    """
+        Testa e valida os dados do arquivo json e salva no final, avisa ao usuário por meio de prints
+    """
+    print(f"Começando validação do arquivo {arquivo_json}")
+    print("Buscando dados...")
+    dados = buscar_dados(arquivo_json)
+    
+    if dados["reescrito"]:
+        print(f"{arquivo_json} estava corrompido e foi necessário reescrevê-lo.")
+        print("Salvando dados...")
+        salvar_dados(dados=dados["dados"], arquivo=arquivo_json)
+        return
+    
+    print("Validando dicionário do arquivo...")
+    dados_arquivo = validar_arquivo(dados)
 
+    if dados_arquivo["alterou"]:
+        print("Os dados do arquivo lido estavam corrompidos, foi necessário reescrevê-lo")
+        print("Salvando dados...")
+        salvar_dados(dados=dados_arquivo["dados"], arquivo=arquivo_json)
+        print("Dados salvos...")
+        return
+
+    
+    print("Validando chaves do dicionário...")
+    dados_chave = validar_chaves(dados_arquivo)
+
+    chaves_validar = ["LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"]
+
+    if chaves_validar[0] in dados_chave["chaves_alteradas"]:
+        chaves_validar.pop(0)
+
+    if chaves_validar[1] in dados_chave["chaves_alteradas"]:
+        chaves_validar.pop(1)
+    
+    if chaves_validar[2] in dados_chave["chaves_alteradas"]:
+        chaves_validar.pop(2)
+    
+    print("Validando itens...")
+
+    if "LISTA_TAREFAS" in chaves_validar:
+        dados_tarefas = validar_itens(dados_chave["dados"], "LISTA_TAREFAS")
+        if dados_tarefas["alterado"]:
+            if dados_tarefas["reescrito"]:
+                print("As tarefas pendentes estavam corrompidas, tiverem de ser apagadas e a lista foi reescrita!")
+            else:
+                print("Itens que foram removidos das tarefas pendentes...")
+                for item in dados_tarefas["itens_removidos"]:
+                    print(item)
+        else:
+            print("Tarefas pendentes válidas")
+        dados_chave["LISTA_TAREFAS"] = dados_tarefas
+
+    if "LISTA_TAREFAS_CONCLUIDAS" in chaves_validar:
+        dados_tarefas = validar_itens(dados_chave["dados"], "LISTA_TAREFAS_CONCLUIDAS")
+        if dados_tarefas["alterado"]:
+            if dados_tarefas["reescrito"]:
+                print("As tarefas concluidas estavam corrompidas, tiverem de ser apagadas e a lista foi reescrita!")
+            else:
+                print("Itens que foram removidos das tarefas concluidas...")
+                for item in dados_tarefas["itens_removidos"]:
+                    print(item)
+        else:
+            print("Tarefas concluidas válidas")
+        dados_chave["LISTA_TAREFAS_CONCLUIDAS"] = dados_tarefas
+    
+
+    dados_id = validar_id(dados_tarefas)
+
+    if dados_id["alterado"]:
+        print("ULTIMO_ID cadastrado estava inválido, teve de ser corrigido.")
+    print("Validação finalizada!")
+    print("Salvando dados...")
+    salvar_dados(dados=dados_id, arquivo=arquivo_json)
+    print("Dados salvos...")
+    return
 
 
