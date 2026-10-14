@@ -211,7 +211,7 @@ def testar_json(arquivo_json: str) -> None:
         return
     
     print("Validando dicionário do arquivo...")
-    dados_arquivo = validar_arquivo(dados["reescrito"])
+    dados_arquivo = validar_arquivo(dados["dados"])
 
     if dados_arquivo["alterou"]:
         print("Os dados do arquivo lido estavam corrompidos, foi necessário reescrevê-lo")
