@@ -25,7 +25,8 @@ def buscar_dados(arquivo: str = NOME_ARQUIVO) -> dict:
 
     except json.decoder.JSONDecodeError:
         with open(arquivo, mode="w", encoding="utf-8") as file:
-            json.dump(DICIONARIO_PADRAO, file, ensure_ascii=False, indent=4)
+            dicionario = deepcopy(DICIONARIO_PADRAO)
+            json.dump(dicionario, file, ensure_ascii=False, indent=4)
 
         print(f"O arquivo {arquivo} estava vazio, foi reescrito da forma correta.")
         return {"dados": deepcopy(DICIONARIO_PADRAO), "reescrito": True}
@@ -55,14 +56,14 @@ def validar_arquivo(dados: dict) -> dict:
 
         if dados_arquivo == {}:
             # Dicionário vazio
-            dados_arquivo = DICIONARIO_PADRAO
+            dados_arquivo = deepcopy(DICIONARIO_PADRAO)
             return {"dados": dados_arquivo,
                     "alterou": True}
 
         return {"dados": dados_arquivo,
                 "alterou": False}
 
-    dados_arquivo = DICIONARIO_PADRAO
+    dados_arquivo = deepcopy(DICIONARIO_PADRAO)
 
     return {"dados": dados_arquivo,
             "alterou": True}
@@ -153,7 +154,6 @@ def validar_itens(dicionario: dict, chave: str) -> dict:
             alterado = True
             continue
 
-
     return {"dados": dados,
             "alterado": alterado,
             "reescrito": False,
@@ -171,7 +171,7 @@ def validar_id(dicionario_completo: dict) -> dict:
 
     dados = deepcopy(dicionario_completo)
 
-    def buscar_maior_id(tarefas: list, tarefas_concluidas: list)-> id:
+    def buscar_maior_id(tarefas: list, tarefas_concluidas: list)-> int:
         maior_id = 0
         for item in tarefas:
             if item["id"] > maior_id:
