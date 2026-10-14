@@ -136,20 +136,23 @@ def validar_itens(dicionario: dict, chave: str) -> dict:
 
     chaves_corretas = {"id", "nome", "status"}
 
+    dados_copia = deepcopy(dados)
     
-
-    for item in dados:
+    for item in dados_copia:
         if not isinstance(item, dict):
             itens_removidos.append(item)
             dados.remove(item)
             alterado = True
             continue
+
+
         chaves = set(item.keys())
         if chaves != chaves_corretas:
             itens_removidos.append(item)
             dados.remove(item)
             alterado = True
             continue
+
 
     return {"dados": dados,
             "alterado": alterado,
@@ -270,3 +273,10 @@ def testar_json(arquivo_json: str) -> None:
     return
 
 
+
+
+if __name__ == "__main__":
+    dicionario = {"LISTA": [1, 2, 3, {"nome": "estudante", "status": "pendente"}, 4],
+                  "LISTA2": []}
+
+    dados = validar_itens(dicionario, "LISTA")
