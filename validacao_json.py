@@ -1,6 +1,6 @@
 import json
-
 from typing import Any
+from copy import deepcopy
 
 # Validação do arquivo .json
 NOME_ARQUIVO = "tarefas.json"
@@ -42,7 +42,30 @@ def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
 
 
 # Validação de casos onde o json não é um dicionário
+def validar_arquivo(dados: dict) -> dict:
+    """
+        Retorna um dicionário com os dados, e indicando se os dados tiverem que ser alterado ou não
+        Se "alterou" == True, não precisa prosseguir com outras validações, pois foi totalmente reescrito
+    """
+    dados_arquivo = deepcopy(dados["dados"])
 
+    if isinstance(dados_arquivo, dict):
+
+        if dados_arquivo == {}:
+            # Dicionário vazio
+            dados_arquivo = DICIONARIO_PADRAO
+            return {"dados": dados_arquivo,
+                    "alterou": True}
+
+        return {"dados": dados_arquivo,
+                "alterou": False}
+
+    dados_arquivo = DICIONARIO_PADRAO
+
+    return {"dados": dados_arquivo,
+            "alterou": True}
+
+    
 
 
 
@@ -52,4 +75,16 @@ def salvar_dados(dados: Any, arquivo: str = NOME_ARQUIVO) -> bool:
 
 
 if __name__ == "__main__":
-   
+
+    dados_ = {"dados": {"a": 1},
+              "alterou": False}
+
+    retorno = validar_arquivo(dados_)
+
+    if retorno["alterou"]:
+        print("Arquivo reescrito")
+
+    print(retorno["dados"])
+
+
+
