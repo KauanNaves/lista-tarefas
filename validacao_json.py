@@ -67,13 +67,16 @@ def validar_arquivo(dados: dict) -> dict:
 
 
 # Validação das chaves
-def validar_chaves(dados: dict):
+def validar_chaves(dados: dict) -> dict:
+    """
+        Recebe o dicionário e verifica se todas as chaves estão corretas, adiciona e remove as que forem necessárias, retorna um dicionário dados validados e as chaves alteradas, todas as chaves alteradas foram reescritas, então não precisa validar os seus itens
+    """
+
     dados_dicionario = deepcopy(dados)
     chaves_alteradas = []
     chaves = set(dados_dicionario.keys())
     chaves_corretas = {"LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"}
     chaves_incorretas = []
-    chaves_removidas = []
 
     if chaves != chaves_corretas: # Compara as chaves do dicionário e remove as incorretas do dicionario, adicionando na lista de chaves_incorretas
         for chave in chaves:
@@ -100,60 +103,55 @@ def validar_chaves(dados: dict):
 
 
     return {"dados": dados_dicionario,
-            "chaves_alterados": set(chaves_alteradas)
-                }
+            "chaves_alterados": set(chaves_alteradas)}
 
 
 # Validação dos itens de cada chave
-def validar_item():
+def validar_itens(dicionario: dict, chave: str):
+    """
+        Recebe somente a chave necessária para validar os dados, por exemplo, recebe somente "LISTA_TAREFAS" e valida
+        -- Não valida "ULTIMO_ID" --
+        Retorna o dicionário com os dados corretos, e alterado=bool indicando se foi alterado ou não, uma lista com os itens removidos e um indicador se foi reescrito ou não
+    """
+    dados = deepcopy(dicionario[chave])
+    itens_removidos = list()
+    alterado = False
 
-        # Validando item por item
-    if "LISTA_TAREFAS" not in chaves_alteradas:
-        for item in dados_dicionario["LISTA_TAREFAS"]:
-            if set(item.keys()) != {"id", "nome", "status"}:
-                itens_apagados.append(item)
-                dados_dicionario["LISTA_TAREFAS"].remove(item)
-                continue
-            else:
-                if not isinstance(item["id"], int):
-                    itens_apagados.append(item)
-                    dados_dicionario["LISTA_TAREFAS"].remove(item)
-                    continu 
-                if not isinstance(item["nome"], str):
-                    itens_apagados.append(item)
-                    dados_dicionario["LISTA_TAREFAS"].remove(item)
-                    continu 
-                if not isinstance(item["status"], str):
-                    itens_apagados.append(item)
-                    dados_dicionario["LISTA_TAREFAS"].remove(item)
-                    continue       
+    if not isinstance(dados, list):
+        dados = []
+        alterado = True
+        return {"dados": dados,
+                "alterado": alterado,
+                "reescrito": True,
+                "itens_removidos": itens_removidos}
+
+    chaves_corretas = {"id", "nome", "status"}
+
+    
+
+    for item in dados:
+        if not isinstance(item, dict):
+            itens_removidos.append(item)
+            dados.remove(item)
+            alterado = True
+            continue
+        chaves = set(item.keys())
+        if chaves != chaves_corretas:
+            itens_removidos.append(item)
+            dados.remove(item)
+            alterado = True
+            continue
+
+    return {"dados": dados,
+            "alterado": alterado,
+            "reescrito": False,
+            "itens_removidos": itens_removidos}
 
 
-    if "LISTA_TAREFAS_CONCLUIDAS" not in chaves_alteradas:
-            for item in dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"]:
-                if set(item.keys()) != {"id", "nome", "status"}:
-                    itens_apagados.append(item)
-                    dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
-                    continue
-                else:
-                    if not isinstance(item["id"], int):
-                        itens_apagados.append(item)
-                        dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
-                        continue
-
-                    if not isinstance(item["nome"], str):
-                        itens_apagados.append(item)
-                        dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
-                        continue
-
-                    if not isinstance(item["status"], str):
-                        itens_apagados.append(item)
-                        dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"].remove(item)
-                        continue           
-            
 
 
 if __name__ == "__main__":
+
 
 
 
