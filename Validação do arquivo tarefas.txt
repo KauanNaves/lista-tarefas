@@ -1,0 +1,28 @@
+Validação do arquivo tarefas.json
+
+	1º - Validar casos onde o arquivo json não é um dicionário.
+	
+	2° - Validar casos onde o dicionário não contém as chaves e tipo de itens corretas, por exemplo, a chave "LISTA_TAREFAS" deve estar no dicionário e deve ser uma lista.
+	
+	3° - Validar os itens de cada lista (pendentes e concluídas), todo item deve ser um dicionário com a seguinte estrutura: "id": "int", "nome": "str" e "status": "str", todo item que não seguir essa estrutura será descartado (avisando ao usuário através de uma lista de descartados).
+	
+	4° - Validar o "ULTIMO_ID" do dicionário, se ele for um número inteiro, comparar com o maior_id cadastrado nas tarefas:
+		- Se ele for menor, trocar "ULTIMO_ID" por "maior_id"
+		- Se não for um inteiro, também trocar "ULTIMO_ID" por "maior_id"
+		
+		
+Funções necessárias:
+	- validar_arquivo() -> recebe os dados lidos do arquivo, faça uma deepcopy, realiza as validações, retorna um dict na estrutura: {"dados": dados, "alterou": bool} 
+		- Se "alterou" for True, não precisa realizar outras validações, nesta etapa o arquivo é reescrito completamente.
+		
+	- validar_chaves() -> recebe os dados validados, faz uma deepcopy, realiza as validações de chave, valida os itens de cada chave e retorna um dict na estrutura: {"dados": dados, "chaves_alteradas": list[str]}
+		- Continua as validações de qualquer forma
+		- Cada chave dentro da lista "chaves_alteradas" significa que estava incorreta e foi reescrita, não precisa validar essas.
+			
+	- validar_itens() -> recebe os dados validados, faz uma deepcopy, realiza as validações, retorna um dict na estrutura: {"dados": dados, "itens_apagados": list, alterou: bool}
+		- Retorna a lista de itens apagados para ser mostrado ao usuário
+		- Se não alterou, não preciso ler a lista de itens apagados
+		
+	- validar_ultimo_id() -> recebe os dados validados, faz uma deepcopy, realiza as validações, busca o "maior_id", compara os valores e retorna {"dados": dados}
+	
+Salvamos no arquivo e começamos o programa
