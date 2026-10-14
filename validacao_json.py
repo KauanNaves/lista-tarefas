@@ -227,6 +227,10 @@ def testar_json(arquivo_json: str) -> None:
     print("Validando chaves do dicionário...")
     dados_chave = validar_chaves(dados_arquivo["dados"])
 
+    print("Chaves alteradas/excluídas")
+    for chave in dados_chave["chaves_alteradas"]:
+        print(chave)
+
     chaves_validar = ["LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"]
 
     for chave in chaves_validar:
