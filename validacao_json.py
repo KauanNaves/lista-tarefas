@@ -107,7 +107,7 @@ def validar_chaves(dados: dict) -> dict:
 
 
 # Validação dos itens de cada chave
-def validar_itens(dicionario: dict, chave: str):
+def validar_itens(dicionario: dict, chave: str) -> dict:
     """
         Recebe somente a chave necessária para validar os dados, por exemplo, recebe somente "LISTA_TAREFAS" e valida
         -- Não valida "ULTIMO_ID" --
@@ -148,9 +148,41 @@ def validar_itens(dicionario: dict, chave: str):
             "itens_removidos": itens_removidos}
 
 
+# Validação do "ULTIMO_ID"
+def validar_id(dicionario_completo: dict) -> dict:
+    """
+        Recebe o dicionário completo e valida o ultimo_id, verifica se é um inteiro e se é maior que o maior id cadastrado
+        Retorna um dicionário com os dados e indicando se foi alterado
+    """
+
+    dados = deepcopy(dicionario_completo)
+
+    def buscar_maior_id(tarefas: list, tarefas_concluidas: list)-> id:
+        maior_id = 0
+        for item in tarefas:
+            if item["id"] > maior_id:
+                maior_id = item["id"] 
+
+        for item in tarefas_concluidas:
+            if item["id"] > maior_id:
+                maior_id = item["id"]
+
+        return maior_id
+
+    maior_id = buscar_maior_id(dados["LISTA_TAREFAS"], dados["LISTA_TAREFAS_CONCLUIDAS"])
 
 
-if __name__ == "__main__":
+    if not isinstance(dados["ULTIMO_ID"], int): 
+        dados["ULTIMO_ID"] = maior_id
+        return {"dados": dados,
+                "alterado": True}
+
+    if dados["ULTIMO_ID"] < maior_id:
+        dados["ULTIMO_ID"] = maior_id
+        return {"dados": dados,
+                "alterado": True}
+    return {"dados": dados,
+            "alterado": False}
 
 
 
