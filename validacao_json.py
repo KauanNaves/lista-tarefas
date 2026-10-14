@@ -73,33 +73,18 @@ def validar_chaves(dados: dict):
     chaves = set(dados_dicionario.keys())
     chaves_corretas = {"LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"}
     chaves_incorretas = []
+    chaves_removidas = []
 
-    if chaves == chaves_corretas:
-        if not isinstance(dados_dicionario["LISTA_TAREFAS"], list):
-            dados_dicionario["LISTA_TAREFAS"] = []
-            chaves_alteradas.append("LISTA_TAREFAS")
-
-        if not isinstance(dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"], list):
-            dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"] = []
-            chaves_alteradas.append("LISTA_TAREFAS_CONCLUIDAS")
-
-        if not isinstance(dados_dicionario["ULTIMO_ID"], int):
-            dados_dicionario["ULTIMO_ID"] = 0
-            chaves_alteradas.append("ULTIMO_ID")
-
-
-    if chaves != chaves_corretas:
+    if chaves != chaves_corretas: # Compara as chaves do dicionário e remove as incorretas do dicionario, adicionando na lista de chaves_incorretas
         for chave in chaves:
             if chave not in chaves_corretas:
                 chaves_incorretas.append(chave)
                 dados_dicionario.pop(chave)
 
-
-    for chave in chaves_incorretas:
+    for chave in chaves_incorretas: # Percorre as chaves incorretas e as retiram da lista de chaves 
         chaves.remove(chave)
 
-
-    if len(chaves) < 3:
+    if chaves != chaves_corretas: # Compara se as chaves são as corretas
         if "LISTA_TAREFAS" not in chaves:
             dados_dicionario["LISTA_TAREFAS"] = []
             chaves_alteradas.append("LISTA_TAREFAS")
@@ -108,14 +93,15 @@ def validar_chaves(dados: dict):
             dados_dicionario["LISTA_TAREFAS_CONCLUIDAS"] = []
             chaves_alteradas.append("LISTA_TAREFAS_CONCLUIDAS")
 
-
         if "ULTIMO_ID" not in chaves:
             dados_dicionario["ULTIMO_ID"] = 0
             chaves_alteradas.append("ULTIMO_ID")
 
 
+
     return {"dados": dados_dicionario,
-            "chaves_alterados": set(chaves_alteradas)}
+            "chaves_alterados": set(chaves_alteradas)
+                }
 
 
 # Validação dos itens de cada chave
@@ -169,14 +155,6 @@ def validar_item():
 
 if __name__ == "__main__":
 
-    dicionario = {"LISTA_TAREFAS_CONCLUIDAS": 1,
-                  "ULTIMO_ID ": 2,
-                  "LISTA_TAREFAS": []}
-
-    chaves = set(dicionario.keys())
-    chaves2 = set(DICIONARIO_PADRAO.keys())
-
-    print(chaves == chaves2)
 
 
 
