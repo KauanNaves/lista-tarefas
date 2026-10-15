@@ -154,7 +154,7 @@ def validar_itens(dicionario: dict, chave: str) -> dict:
             alterado = True
             continue
         else:
-            if not isinstance(item["id"], int):
+            if not isinstance(item["id"], int) or isinstance(item["id"], bool):
                 itens_removidos.append(item)
                 dados.remove(item)
                 alterado = True
