@@ -1,8 +1,9 @@
 from os import system
 import json
 from validacao_json import testar_json, DICIONARIO_PADRAO
+from copy import deepcopy
 
-TAREFAS = DICIONARIO_PADRAO
+TAREFAS = deepcopy(DICIONARIO_PADRAO)
 NOME_ARQUIVO = 'tarefas.json'
 
 def criar_arquivo():
