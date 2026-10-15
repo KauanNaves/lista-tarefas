@@ -203,7 +203,7 @@ def validar_id(dicionario_completo: dict) -> dict:
     maior_id = buscar_maior_id(dados["LISTA_TAREFAS"], dados["LISTA_TAREFAS_CONCLUIDAS"])
 
 
-    if not isinstance(dados["ULTIMO_ID"], int) or dados["ULTIMO_ID"] == True: 
+    if not isinstance(dados["ULTIMO_ID"], int) or isinstance(dados["ULTIMO_ID"], bool): 
         dados["ULTIMO_ID"] = maior_id
         return {"dados": dados,
                 "alterado": True}
@@ -300,6 +300,4 @@ def testar_json(arquivo_json: str) -> None:
 
 
 if __name__ == "__main__":
-    print(int(True))
-    id = True
-    print(id.is_integer())
+    print(type(True), type(1))
