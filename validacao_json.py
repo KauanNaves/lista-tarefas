@@ -171,15 +171,24 @@ def validar_id(dicionario_completo: dict) -> dict:
 
     dados = deepcopy(dicionario_completo)
 
+    def validar_itens(lista: list) -> list:
+        lista_itens = deepcopy(lista)
+        itens_sem_id = list()
+
+        for item in lista_itens:
+            if "id" not in list(item.keys())
+
     def buscar_maior_id(tarefas: list, tarefas_concluidas: list)-> int:
         maior_id = 0
         for item in tarefas:
             if item["id"] > maior_id:
                 maior_id = item["id"] 
 
+
         for item in tarefas_concluidas:
             if item["id"] > maior_id:
                 maior_id = item["id"]
+
 
         return maior_id
 
@@ -227,9 +236,10 @@ def testar_json(arquivo_json: str) -> None:
     print("Validando chaves do dicionário...")
     dados_chave = validar_chaves(dados_arquivo["dados"])
 
-    print("Chaves alteradas/excluídas")
-    for chave in dados_chave["chaves_alteradas"]:
-        print(chave)
+    if dados_chave["chaves_alteradas"]:
+        print("Chaves alteradas/excluídas")
+        for chave in dados_chave["chaves_alteradas"]:
+            print(chave)
 
     chaves_validar = ["LISTA_TAREFAS", "LISTA_TAREFAS_CONCLUIDAS", "ULTIMO_ID"]
 
