@@ -153,6 +153,23 @@ def validar_itens(dicionario: dict, chave: str) -> dict:
             dados.remove(item)
             alterado = True
             continue
+        else:
+            if not isinstance(item["id"], int):
+                itens_removidos.append(item)
+                dados.remove(item)
+                alterado = True
+                
+            if not isinstance(item["nome"], str):
+                itens_removidos.append(item)
+                dados.remove(item)
+                alterado = True
+
+            if not isinstance(item["status"], str):
+                itens_removidos.append(item)
+                dados.remove(item)
+                alterado = True
+            continue
+
 
     return {"dados": dados,
             "alterado": alterado,
@@ -186,7 +203,7 @@ def validar_id(dicionario_completo: dict) -> dict:
     maior_id = buscar_maior_id(dados["LISTA_TAREFAS"], dados["LISTA_TAREFAS_CONCLUIDAS"])
 
 
-    if not isinstance(dados["ULTIMO_ID"], int): 
+    if not isinstance(dados["ULTIMO_ID"], int) or dados["ULTIMO_ID"] == True: 
         dados["ULTIMO_ID"] = maior_id
         return {"dados": dados,
                 "alterado": True}
@@ -283,7 +300,6 @@ def testar_json(arquivo_json: str) -> None:
 
 
 if __name__ == "__main__":
-    dicionario = {"LISTA": [1, 2, 3, {"nome": "estudante", "status": "pendente"}, 4],
-                  "LISTA2": []}
-
-    dados = validar_itens(dicionario, "LISTA")
+    print(int(True))
+    id = True
+    print(id.is_integer())
