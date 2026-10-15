@@ -296,8 +296,3 @@ def testar_json(arquivo_json: str) -> None:
     return
 
  
-
-
-
-if __name__ == "__main__":
-    print(type(True), type(1))
